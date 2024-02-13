@@ -32,7 +32,7 @@ const getUserById = (request, response) => {
     });
 }
 
-const postUser = (request, response) => {
+const createUser = (request, response) => {
   const { firstname, lastname, email, city, language } = request.body;
 
   database
@@ -49,8 +49,31 @@ const postUser = (request, response) => {
     })
 }
 
+const updateUser = (request, response) => {
+  const id = parseInt(request.params.id);
+  const { firstname, lastname, email, city, language } =  request.body;
+
+  database
+    .query(
+      "UPDATE users SET firstname = ?, lastname = ?, email = ?, city = ?, language = ? WHERE id = ?",
+      [firstname, lastname, email, city, language]
+    )
+    .then(([result]) => {
+      if(result.affectedRows === 0) {
+        response.status(404);
+      } else {
+        response.status(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.status(500);
+    });
+}
+
 module.exports = {
   getUsers,
   getUserById,
-  postUser,
+  createUser,
+  updateUser,
 }

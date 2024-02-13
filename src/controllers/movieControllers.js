@@ -32,7 +32,7 @@ const getMovieById = (request, response) => {
     });
 };
 
-const postMovie = (request, response) => {
+const createMovie = (request, response) => {
   const { title, director, year, color, duration } = request.body;
 
   database
@@ -49,8 +49,31 @@ const postMovie = (request, response) => {
     })
 };
 
+const updateMovie = (request, response) => {
+  const id = parseInt(request.params.id);
+  const { title, director, year, color, duration } = req.body;
+
+  database
+    .query(
+      "UPDATE movies SET title = ?, director = ?, year = ?, color = ?, duration  = ? where id = ?",
+      [title, director, year, color, duration, id]
+    )
+    .then(([result]) => {
+      if(result.affectedRows === 0) {
+        response.status(404);
+      } else {
+        response.status(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.status(500);
+    });
+};
+
 module.exports = {
   getMovies,
   getMovieById,
-  postMovie,
+  createMovie,
+  updateMovie,
 };
