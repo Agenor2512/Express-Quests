@@ -1,4 +1,5 @@
 const database = require("../../database");
+const {request, response} = require("express");
 
 const getMovies = (_, response) => {
   database
@@ -71,9 +72,28 @@ const updateMovie = (request, response) => {
     });
 };
 
+const deleteMovie = (request, response) => {
+  const id = parseInt(request.params.id);
+
+  database
+    .query("DELETE FROM movies WHERE id = ?", [id])
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        response.sendStatus(404);
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.sendStatus(500);
+    });
+}
+
 module.exports = {
   getMovies,
   getMovieById,
   createMovie,
   updateMovie,
+  deleteMovie,
 };

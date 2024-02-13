@@ -71,9 +71,28 @@ const updateUser = (request, response) => {
     });
 }
 
+const deleteUser = (request, response) => {
+  const id = parseInt(request.params.id);
+
+  database
+    .query("DELETE FROM users WHERE id = ?", [id])
+    .then(([result]) => {
+      if (result.affectedRows === 0) {
+        response.sendStatus(404);
+      } else {
+        response.sendStatus(204);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      response.sendStatus(500);
+    });
+}
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
+  deleteUser,
 }
